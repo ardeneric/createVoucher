@@ -21,12 +21,12 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
 //@SpringBootApplication
-@Configuration
-@ComponentScan("com.evoucher")
-@EnableAutoConfiguration
-@PropertySource("classpath:application.properties")
-@EnableJpaRepositories("com.evoucher.repository")
-@EntityScan("com.evoucher.model")
+	@Configuration
+	@ComponentScan("com.evoucher")
+	@EnableAutoConfiguration
+	@PropertySource("classpath:application.properties")
+	@EnableJpaRepositories("com.evoucher.repository")
+	@EntityScan("com.evoucher.model")
 public class CreateEvoucherApplication {
 
 	/*
@@ -82,35 +82,3 @@ public class CreateEvoucherApplication {
 		return properties;
 	}
 }
-
-/*
- * @Value("${port:8080}") private int port;
- * 
- * @Value("jdbc:h2:${db.url}") private String url;
- * 
- * @Value("${db.username}") private String username;
- * 
- * @Value("${db.password}") private String password;
- * 
- * @Bean public DataSource dataSource() { BoneCPDataSource dataSource = new
- * BoneCPDataSource(); dataSource.setDriverClass("org.h2.Driver");
- * dataSource.setJdbcUrl(url); dataSource.setUsername(username);
- * dataSource.setPassword(password); return dataSource; }
- */
-
-/*
- * @Autowired Environment environment;
- * 
- * private final String URL =
- * "dbc:mysql://itc.ciu6a2q0dqp7.us-west-2.rds.amazonaws.com/demo?jdbcCompliantTruncation=false";
- * private final String USER = "voucher"; private final String DRIVER =
- * "com.mysql.jdbc.Driver"; private final String PASSWORD = "jay74{craves";
- * 
- * @Bean DataSource dataSource() { DriverManagerDataSource
- * driverManagerDataSource = new DriverManagerDataSource();
- * driverManagerDataSource.setUrl(environment.getProperty(URL));
- * driverManagerDataSource.setUsername(environment.getProperty(USER));
- * driverManagerDataSource.setPassword(environment.getProperty(PASSWORD));
- * driverManagerDataSource.setDriverClassName(environment.getProperty(DRIVER));
- * return driverManagerDataSource; }
- */

@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Component;
 
-import com.evoucher.dao.VoucherDao;
 import com.evoucher.model.Evoucher;
 import com.evoucher.model.Status;
 import com.evoucher.repository.CreateEvoucherRepository;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CreateEvoucherServiceImpl implements CreateEvoucherService{
 	public final CreateEvoucherRepository createEvoucherRepository;
-	public final VoucherDao voucherDao;
 
 	@Override
 	public List<Evoucher> createEvoucher(Integer count) {
@@ -31,10 +29,8 @@ public class CreateEvoucherServiceImpl implements CreateEvoucherService{
 				e.setStatus(String.valueOf(Status.VALID.ordinal()));
 				e.setVoucher(RandomStringUtils.randomAlphanumeric(12).toUpperCase());
 				evoucherList.add(e);
-				//voucherDao.save(e);
 			}
 		}
-		//return evoucherList;
 		return createEvoucherRepository.saveAll(evoucherList);
 	}
 
