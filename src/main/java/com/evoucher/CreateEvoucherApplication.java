@@ -1,40 +1,116 @@
 package com.evoucher;
 
+import java.util.Properties;
+
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
 
 //@SpringBootApplication
 @Configuration
-@ComponentScan
+@ComponentScan("com.evoucher")
+@EnableAutoConfiguration
 @PropertySource("classpath:application.properties")
+@EnableJpaRepositories("com.evoucher.repository")
+@EntityScan("com.evoucher.model")
 public class CreateEvoucherApplication {
 
-	/*public static void main(String[] args) {
-		SpringApplication.run(CreateEvoucherApplication.class, args);
-	}*/
-	
-	@Autowired
-	Environment environment;
+	/*
+	 * public static void main(String[] args) {
+	 * SpringApplication.run(CreateEvoucherApplication.class, args); }
+	 */
 
-	private final String URL = "dbc:mysql://itc.ciu6a2q0dqp7.us-west-2.rds.amazonaws.com/demo?jdbcCompliantTruncation=false";
-	private final String USER = "voucher";
-	private final String DRIVER = "com.mysql.jdbc.Driver";
-	private final String PASSWORD = "jay74{craves";
+	@Bean(name = "entityManagerFactory")
+	public LocalContainerEntityManagerFactoryBean getEntityManagerFactoryBean() {
+		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+		em.setPackagesToScan("com.evoucher.model");
+		em.setPersistenceUnitName("voucherPersistenceUnit");
+		em.setPersistenceXmlLocation("classpath:META-INF/persistence.xml");
+
+		em.setDataSource(dataSource());
+
+		JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		em.setJpaVendorAdapter(vendorAdapter);
+		em.setJpaProperties(additionalProperties());
+
+		return em;
+	}
 
 	@Bean
-	DataSource dataSource() {
-		DriverManagerDataSource driverManagerDataSource = new DriverManagerDataSource();
-		driverManagerDataSource.setUrl(environment.getProperty(URL));
-		driverManagerDataSource.setUsername(environment.getProperty(USER));
-		driverManagerDataSource.setPassword(environment.getProperty(PASSWORD));
-		driverManagerDataSource.setDriverClassName(environment.getProperty(DRIVER));
-		return driverManagerDataSource;
+	public DataSource dataSource() {
+		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		dataSource
+				.setUrl("jdbc:mysql://itc.ciu6a2q0dqp7.us-west-2.rds.amazonaws.com/demo?jdbcCompliantTruncation=false");
+		dataSource.setUsername("voucher");
+		dataSource.setPassword("jay74{craves");
+		return dataSource;
+	}
+
+	@Bean
+	public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+		JpaTransactionManager transactionManager = new JpaTransactionManager();
+		transactionManager.setEntityManagerFactory(emf);
+
+		return transactionManager;
+	}
+
+	@Bean
+	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+		return new PersistenceExceptionTranslationPostProcessor();
+	}
+
+	Properties additionalProperties() {
+		Properties properties = new Properties();
+		properties.setProperty("hibernate.hbm2ddl.auto", "update");
+		properties.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5Dialect");
+
+		return properties;
 	}
 }
+
+/*
+ * @Value("${port:8080}") private int port;
+ * 
+ * @Value("jdbc:h2:${db.url}") private String url;
+ * 
+ * @Value("${db.username}") private String username;
+ * 
+ * @Value("${db.password}") private String password;
+ * 
+ * @Bean public DataSource dataSource() { BoneCPDataSource dataSource = new
+ * BoneCPDataSource(); dataSource.setDriverClass("org.h2.Driver");
+ * dataSource.setJdbcUrl(url); dataSource.setUsername(username);
+ * dataSource.setPassword(password); return dataSource; }
+ */
+
+/*
+ * @Autowired Environment environment;
+ * 
+ * private final String URL =
+ * "dbc:mysql://itc.ciu6a2q0dqp7.us-west-2.rds.amazonaws.com/demo?jdbcCompliantTruncation=false";
+ * private final String USER = "voucher"; private final String DRIVER =
+ * "com.mysql.jdbc.Driver"; private final String PASSWORD = "jay74{craves";
+ * 
+ * @Bean DataSource dataSource() { DriverManagerDataSource
+ * driverManagerDataSource = new DriverManagerDataSource();
+ * driverManagerDataSource.setUrl(environment.getProperty(URL));
+ * driverManagerDataSource.setUsername(environment.getProperty(USER));
+ * driverManagerDataSource.setPassword(environment.getProperty(PASSWORD));
+ * driverManagerDataSource.setDriverClassName(environment.getProperty(DRIVER));
+ * return driverManagerDataSource; }
+ */

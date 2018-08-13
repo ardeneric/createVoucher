@@ -10,13 +10,14 @@ import org.springframework.stereotype.Component;
 import com.evoucher.dao.VoucherDao;
 import com.evoucher.model.Evoucher;
 import com.evoucher.model.Status;
+import com.evoucher.repository.CreateEvoucherRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
 public class CreateEvoucherServiceImpl implements CreateEvoucherService{
-	//public final CreateEvoucherRepository createEvoucherRepository;
+	public final CreateEvoucherRepository createEvoucherRepository;
 	public final VoucherDao voucherDao;
 
 	@Override
@@ -30,10 +31,11 @@ public class CreateEvoucherServiceImpl implements CreateEvoucherService{
 				e.setStatus(String.valueOf(Status.VALID.ordinal()));
 				e.setVoucher(RandomStringUtils.randomAlphanumeric(12).toUpperCase());
 				evoucherList.add(e);
-				voucherDao.save(e);
+				//voucherDao.save(e);
 			}
 		}
-		return evoucherList;
+		//return evoucherList;
+		return createEvoucherRepository.saveAll(evoucherList);
 	}
 
 }
